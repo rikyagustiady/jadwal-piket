@@ -14,8 +14,6 @@
         .hapusBtn{background:red;margin-bottom:10px;}
         .editNama{background:#fff3cd; cursor:text;}
         .editCatatan{background:#d1ecf1; cursor:text;}
-        .catatanKosong {background:#f8d7da;}
-        .catatanIsi {background:#d1ecf1;}
     </style>
 </head>
 <body>
@@ -41,8 +39,6 @@
 
 <script>
 let daftarNama=["Koptu Karim","Serka Riky","Serma Totok","Serka Ibnu","Sertu Manik","Sertu Fariz"];
-
-// Libur bulan Maret
 let libur2026={
 "2026-03-18":"Cuti Bersama Nyepi",
 "2026-03-19":"Hari Suci Nyepi",
@@ -59,21 +55,21 @@ function format(t){
  return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,'0')+"-"+String(t.getDate()).padStart(2,'0');
 }
 
-// Ambil data nama & catatan yang tersimpan di localStorage (jika ada)
+// Ambil data nama & catatan dari localStorage
 let savedNama = JSON.parse(localStorage.getItem("namaPiket")||"[]");
 let savedCatatan = JSON.parse(localStorage.getItem("catatanPiket")||"[]");
 let savedIndex = 0;
 
 // BULAN MARET
 let b = 2; // Maret
-let rb=tabel.insertRow();
-rb.className="bulan";
-rb.insertCell(0).colSpan=6;
-rb.cells[0].innerHTML="BULAN MARET 2026";
+let rb = tabel.insertRow();
+rb.className = "bulan";
+rb.insertCell(0).colSpan = 6;
+rb.cells[0].innerHTML = "BULAN MARET 2026";
 
-// Loop hari Maret
-let jumlahHari=new Date(2026,b+1,0).getDate();
-let noNama=0;
+// Hitung jumlah hari Maret
+let jumlahHari = new Date(2026, b+1, 0).getDate();
+let noNama = 0;
 
 for(let d=1; d<=jumlahHari; d++){
     let tgl = new Date(2026,b,d);
@@ -89,51 +85,35 @@ for(let d=1; d<=jumlahHari; d++){
         tr.insertCell(2).innerHTML = libur2026[tglStr];
         tr.insertCell(3).innerHTML = "-";
         tr.insertCell(4).innerHTML = "-";
-        let catCell = tr.insertCell(5);
-        catCell.innerHTML = "-";
-        catCell.className = "catatanKosong";
-    }
-    else if(hari==0 || hari==6){
+        tr.insertCell(5).innerHTML = "-";
+    } else if(hari==0 || hari==6){
         tr.className="libur";
         tr.insertCell(2).innerHTML = "Libur Akhir Pekan";
         tr.insertCell(3).innerHTML = "-";
         tr.insertCell(4).innerHTML = "-";
-        let catCell = tr.insertCell(5);
-        catCell.innerHTML = "-";
-        catCell.className = "catatanKosong";
-    }
-    else{
+        tr.insertCell(5).innerHTML = "-";
+    } else {
         tr.insertCell(2).innerHTML = "-";
 
         // Nama piket
         let namaCell = tr.insertCell(3);
         let orang = daftarNama[noNama % daftarNama.length];
         noNama++;
-        if(savedNama[savedIndex]) namaCell.innerText = savedNama[savedIndex];
-        else namaCell.innerText = orang;
+        namaCell.innerText = savedNama[savedIndex] || orang;
         namaCell.contentEditable = true;
         namaCell.className = "editNama";
 
         // Catatan
         let catCell = tr.insertCell(5);
-        if(savedCatatan[savedIndex]) catCell.innerText = savedCatatan[savedIndex];
-        else catCell.innerText = "";
+        catCell.innerText = savedCatatan[savedIndex] || "";
         catCell.contentEditable = true;
-        catCell.className = catCell.innerText ? "editCatatan catatanIsi" : "editCatatan catatanKosong";
-
-        // Event perubahan warna catatan saat diisi
-        catCell.addEventListener("input", ()=>{
-            catCell.className = catCell.innerText.trim() ? "editCatatan catatanIsi" : "editCatatan catatanKosong";
-            simpanData();
-        });
+        catCell.className = "editCatatan";
 
         savedIndex++;
 
-        // Event listener nama & catatan
-        namaCell.addEventListener("input", ()=>{
-            hitungRekap();
-            simpanData();
-        });
+        // Event listener
+        namaCell.addEventListener("input", ()=>{ hitungRekap(); simpanData(); });
+        catCell.addEventListener("input", simpanData);
 
         tr.insertCell(4).innerHTML = "<button onclick='absen(this)'>Absen</button>";
     }
