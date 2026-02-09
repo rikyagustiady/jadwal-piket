@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Jadwal Piket Bulanan</title>
+<style>
+body{
+    font-family: Arial;
+    background: linear-gradient(135deg,#4facfe,#00f2fe);
+    margin:0;
+    text-align:center;
+}
+h2{
+    color:white;
+    padding-top:20px;
+}
+.box{
+    background:white;
+    margin:20px auto;
+    padding:20px;
+    width:90%;
+    max-width:500px;
+    border-radius:10px;
+}
+button{
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    background:#4facfe;
+    color:white;
+    font-weight:bold;
+}
+table{
+    width:100%;
+    margin-top:15px;
+    border-collapse:collapse;
+}
+td,th{
+    border:1px solid #ccc;
+    padding:6px;
+}
+</style>
+</head>
+<body>
+
+<h2>📅 Jadwal Piket 1 Bulan</h2>
+
+<div class="box">
+<input type="text" id="namaInput" placeholder="Masukkan nama, pisah koma">
+<br><br>
+<button onclick="buatJadwal()">Buat Jadwal</button>
+<button onclick="acak()">Acak Ulang</button>
+
+<table id="tabelJadwal"></table>
+</div>
+
+<script>
+let namaList=[];
+
+function buatJadwal(){
+    let input=document.getElementById("namaInput").value;
+    namaList=input.split(",");
+    tampilkan();
+}
+
+function tampilkan(){
+    let tabel=document.getElementById("tabelJadwal");
+    tabel.innerHTML="<tr><th>Tanggal</th><th>Petugas</th></tr>";
+    for(let i=1;i<=30;i++){
+        let nama=namaList[i%namaList.length].trim();
+        tabel.innerHTML+=`<tr><td>${i}</td><td>${nama}</td></tr>`;
+    }
+}
+
+function acak(){
+    namaList.sort(()=>Math.random()-0.5);
+    tampilkan();
+}
+</script>
+
+</body>
+</html>
