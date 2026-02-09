@@ -10,6 +10,7 @@
         .libur {background:#ffb3b3;}
         .bulan {background:#34495e; color:white; font-weight:bold;}
         button {padding:4px 8px; background:#3498db; color:white; border:none; cursor:pointer;}
+        #rekap {margin-top:30px; font-size:18px;}
     </style>
 </head>
 <body>
@@ -28,6 +29,8 @@
 
 <h2>DATA ABSEN</h2>
 <ul id="dataAbsen"></ul>
+
+<div id="rekap"></div>
 
 <script>
 let daftarNama=["Koptu Karim","Serka Riky","Serma Totok","Serka Ibnu","Sertu Manik","Sertu Fariz"];
@@ -60,7 +63,6 @@ function format(t){
  return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,'0')+"-"+String(t.getDate()).padStart(2,'0');
 }
 
-// 🔀 Fungsi acak array
 function acak(arr){
  return arr.sort(()=>Math.random()-0.5);
 }
@@ -74,7 +76,6 @@ for(let b=2;b<=11;b++){
  rb.insertCell(0).colSpan=5;
  rb.cells[0].innerHTML="BULAN "+bulanNama[b].toUpperCase();
 
- // 🔥 ACak ulang tiap bulan
  let urutanBulan = acak([...daftarNama]);
  let noNama=0;
 
@@ -134,6 +135,25 @@ function tampilkan(){
 }
 
 tampilkan();
+
+
+// ================= REKAP OTOMATIS =================
+let rekap={};
+daftarNama.forEach(n=>rekap[n]=0);
+
+document.querySelectorAll("#jadwal tr").forEach(row=>{
+ let namaCell=row.cells[3];
+ if(namaCell && namaCell.textContent!="-"){
+   let n=namaCell.textContent;
+   if(rekap[n]!==undefined){rekap[n]++;}
+ }
+});
+
+let divRekap=document.getElementById("rekap");
+divRekap.innerHTML="<h2>REKAP PIKET MARET–DESEMBER 2026</h2>";
+for(let n in rekap){
+ divRekap.innerHTML+=n+" : "+rekap[n]+" kali<br>";
+}
 </script>
 
 </body>
