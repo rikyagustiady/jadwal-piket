@@ -1,34 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Jadwal Piket Bulanan</title>
+    <title>Jadwal Piket + Absen</title>
     <style>
         body {font-family: Arial; background:#f2f2f2; text-align:center;}
         h1 {color:#2c3e50;}
-        table {margin:auto; border-collapse: collapse; width:90%;}
+        table {margin:auto; border-collapse: collapse; width:95%;}
         th, td {border:1px solid #333; padding:8px;}
         th {background:#27ae60; color:white;}
+        button {padding:5px 10px; background:#3498db; color:white; border:none; cursor:pointer;}
     </style>
 </head>
 <body>
 
-<h1>JADWAL PIKET BULANAN</h1>
+<h1>JADWAL PIKET + ABSEN ONLINE</h1>
 
-<table>
+<table id="jadwal">
 <tr>
 <th>Tanggal</th>
 <th>Nama</th>
+<th>Absen</th>
 </tr>
+</table>
+
+<h2>📋 DATA ABSEN</h2>
+<ul id="dataAbsen"></ul>
 
 <script>
 let nama = ["Karim","Riky","Ibnu","Manik","Fariz"];
 let hari = 30;
+let tabel = document.getElementById("jadwal");
+
 for(let i=1;i<=hari;i++){
-    document.write("<tr><td>"+i+"</td><td>"+nama[i%nama.length]+"</td></tr>");
+    let baris = tabel.insertRow();
+    baris.insertCell(0).innerHTML = i;
+    baris.insertCell(1).innerHTML = nama[i%nama.length];
+    baris.insertCell(2).innerHTML = "<button onclick='absen(\""+nama[i%nama.length]+"\")'>Hadir</button>";
+}
+
+function absen(nama){
+    let waktu = new Date().toLocaleString();
+    let data = document.createElement("li");
+    data.innerHTML = nama + " hadir jam " + waktu;
+    document.getElementById("dataAbsen").appendChild(data);
 }
 </script>
-
-</table>
 
 </body>
 </html>
