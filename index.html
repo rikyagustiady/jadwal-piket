@@ -12,6 +12,7 @@
         button {padding:4px 8px; background:#3498db; color:white; border:none; cursor:pointer;}
         #rekap {margin-top:30px; font-size:18px;}
         .hapusBtn{background:red;margin-bottom:10px;}
+        .editNama{background:#fff3cd; cursor:text;}
     </style>
 </head>
 <body>
@@ -23,7 +24,7 @@
 <th>Tanggal</th>
 <th>Hari</th>
 <th>Keterangan</th>
-<th>Nama</th>
+<th>Nama (bisa diedit)</th>
 <th>Absen</th>
 </tr>
 </table>
@@ -108,15 +109,24 @@ for(let b=2;b<=11;b++){
    tr.insertCell(2).innerHTML="-";
    let orang=urutanBulan[noNama%urutanBulan.length];
    noNama++;
-   tr.insertCell(3).innerHTML=orang;
-   tr.insertCell(4).innerHTML="<button onclick='absen(\""+orang+"\")'>Absen</button>";
+
+   let namaCell=tr.insertCell(3);
+   namaCell.innerHTML=orang;
+   namaCell.contentEditable=true;
+   namaCell.className="editNama";
+   namaCell.oninput=hitungRekap;
+
+   tr.insertCell(4).innerHTML="<button onclick='absen(this)'>Absen</button>";
   }
  }
 }
 
-function absen(nama){
- let konfirmasi=confirm("Absen atas nama "+nama+"?");
- if(konfirmasi){
+function absen(btn){
+ let row=btn.parentElement.parentElement;
+ let nama=row.cells[3].innerText.trim();
+ if(nama=="") return alert("Nama belum diisi!");
+
+ if(confirm("Absen atas nama "+nama+"?")){
   let w=new Date().toLocaleString();
   let list=JSON.parse(localStorage.getItem("absenData")||"[]");
   list.push(nama+" hadir "+w);
@@ -145,23 +155,25 @@ function hapusAbsen(){
 
 tampilkan();
 
-// ================= REKAP OTOMATIS =================
-let rekap={};
-daftarNama.forEach(n=>rekap[n]=0);
+// ================= REKAP DINAMIS =================
+function hitungRekap(){
+ let rekap={};
+ document.querySelectorAll(".editNama").forEach(cell=>{
+   let n=cell.innerText.trim();
+   if(n!=""){
+     if(!rekap[n]) rekap[n]=0;
+     rekap[n]++;
+   }
+ });
 
-document.querySelectorAll("#jadwal tr").forEach(row=>{
- let namaCell=row.cells[3];
- if(namaCell && namaCell.textContent!="-"){
-   let n=namaCell.textContent;
-   if(rekap[n]!==undefined){rekap[n]++;}
+ let divRekap=document.getElementById("rekap");
+ divRekap.innerHTML="<h2>REKAP PIKET MARET–DESEMBER 2026</h2>";
+ for(let n in rekap){
+   divRekap.innerHTML+=n+" : "+rekap[n]+" kali<br>";
  }
-});
-
-let divRekap=document.getElementById("rekap");
-divRekap.innerHTML="<h2>REKAP PIKET MARET–DESEMBER 2026</h2>";
-for(let n in rekap){
- divRekap.innerHTML+=n+" : "+rekap[n]+" kali<br>";
 }
+
+hitungRekap();
 </script>
 
 </body>
