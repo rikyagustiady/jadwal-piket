@@ -9,7 +9,7 @@
         th {background:#27ae60; color:white;}
         .libur {background:#ffb3b3;}
         .bulan {background:#34495e; color:white; font-weight:bold;}
-        button {padding:4px 8px; background:#3498db; color:white; border:none;}
+        button {padding:4px 8px; background:#3498db; color:white; border:none; cursor:pointer;}
     </style>
 </head>
 <body>
@@ -30,8 +30,10 @@
 <ul id="dataAbsen"></ul>
 
 <script>
-let nama=["Karim","Riky","Ibnu","Manik","Fariz"];
+// ================= MULTI USER NAMA =================
+let daftarNama=["Karim","Riky","Ibnu","Manik","Fariz"];
 
+// ================= LIBUR =================
 let libur2026={
 "2026-03-18":"Cuti Bersama Nyepi",
 "2026-03-19":"Hari Suci Nyepi",
@@ -83,37 +85,38 @@ for(let b=2;b<=11;b++){
   tr.insertCell(0).innerHTML=tglStr;
   tr.insertCell(1).innerHTML=["Min","Sen","Sel","Rab","Kam","Jum","Sab"][hari];
 
-  // PRIORITAS 1: CUTI / LIBUR NASIONAL
   if(libur2026[tglStr]){
    tr.className="libur";
    tr.insertCell(2).innerHTML=libur2026[tglStr];
    tr.insertCell(3).innerHTML="-";
    tr.insertCell(4).innerHTML="-";
   }
-  // PRIORITAS 2: AKHIR PEKAN
   else if(hari==0 || hari==6){
    tr.className="libur";
    tr.insertCell(2).innerHTML="Libur Akhir Pekan";
    tr.insertCell(3).innerHTML="-";
    tr.insertCell(4).innerHTML="-";
   }
-  // HARI KERJA
   else{
    tr.insertCell(2).innerHTML="-";
-   let orang=nama[noNama%nama.length];
+   let orang=daftarNama[noNama%daftarNama.length];
    noNama++;
    tr.insertCell(3).innerHTML=orang;
-   tr.insertCell(4).innerHTML="<button onclick='absen(\""+orang+"\")'>Hadir</button>";
+   tr.insertCell(4).innerHTML="<button onclick='absen(\""+orang+"\")'>Absen</button>";
   }
  }
 }
 
-function absen(n){
- let w=new Date().toLocaleString();
- let list=JSON.parse(localStorage.getItem("absenData")||"[]");
- list.push(n+" hadir "+w);
- localStorage.setItem("absenData",JSON.stringify(list));
- tampilkan();
+// ================= ABSEN MULTI USER =================
+function absen(nama){
+ let konfirmasi=confirm("Absen atas nama "+nama+"?");
+ if(konfirmasi){
+  let w=new Date().toLocaleString();
+  let list=JSON.parse(localStorage.getItem("absenData")||"[]");
+  list.push(nama+" hadir "+w);
+  localStorage.setItem("absenData",JSON.stringify(list));
+  tampilkan();
+ }
 }
 
 function tampilkan(){
@@ -126,6 +129,7 @@ function tampilkan(){
   d.appendChild(li);
  });
 }
+
 tampilkan();
 </script>
 
