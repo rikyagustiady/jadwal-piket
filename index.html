@@ -11,6 +11,7 @@
         .bulan {background:#34495e; color:white; font-weight:bold;}
         button {padding:4px 8px; background:#3498db; color:white; border:none; cursor:pointer;}
         #rekap {margin-top:30px; font-size:18px;}
+        .hapusBtn{background:red;margin-bottom:10px;}
     </style>
 </head>
 <body>
@@ -28,6 +29,7 @@
 </table>
 
 <h2>DATA ABSEN</h2>
+<button class="hapusBtn" onclick="hapusAbsen()">Hapus Data Absen</button>
 <ul id="dataAbsen"></ul>
 
 <div id="rekap"></div>
@@ -134,8 +136,14 @@ function tampilkan(){
  });
 }
 
-tampilkan();
+function hapusAbsen(){
+ if(confirm("Yakin hapus semua data absen?")){
+   localStorage.removeItem("absenData");
+   tampilkan();
+ }
+}
 
+tampilkan();
 
 // ================= REKAP OTOMATIS =================
 let rekap={};
