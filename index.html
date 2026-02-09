@@ -72,6 +72,10 @@ function acak(arr){
 
 let bulanNama=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
+// Ambil data nama yang tersimpan di localStorage (jika ada)
+let savedNama = JSON.parse(localStorage.getItem("namaPiket")||"[]");
+let savedIndex = 0;
+
 for(let b=2;b<=11;b++){
 
  let rb=tabel.insertRow();
@@ -111,10 +115,22 @@ for(let b=2;b<=11;b++){
    noNama++;
 
    let namaCell=tr.insertCell(3);
-   namaCell.innerHTML=orang;
+   // Jika ada data tersimpan, gunakan itu
+   if(savedNama[savedIndex]){
+       namaCell.innerText = savedNama[savedIndex];
+   } else {
+       namaCell.innerText = orang;
+   }
+   savedIndex++;
+
    namaCell.contentEditable=true;
    namaCell.className="editNama";
-   namaCell.oninput=hitungRekap;
+
+   // Event listener input untuk update rekap & simpan otomatis
+   namaCell.addEventListener("input", ()=>{
+       hitungRekap();
+       simpanNama();
+   });
 
    tr.insertCell(4).innerHTML="<button onclick='absen(this)'>Absen</button>";
   }
@@ -153,8 +169,6 @@ function hapusAbsen(){
  }
 }
 
-tampilkan();
-
 // ================= REKAP DINAMIS =================
 function hitungRekap(){
  let rekap={};
@@ -173,6 +187,17 @@ function hitungRekap(){
  }
 }
 
+// ================= SIMPAN NAMA OTOMATIS =================
+function simpanNama(){
+ let namaData=[];
+ document.querySelectorAll(".editNama").forEach(cell=>{
+   namaData.push(cell.innerText.trim());
+ });
+ localStorage.setItem("namaPiket", JSON.stringify(namaData));
+}
+
+// Inisialisasi tampilan
+tampilkan();
 hitungRekap();
 </script>
 
