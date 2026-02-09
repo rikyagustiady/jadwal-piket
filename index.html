@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Jadwal Piket + Absen</title>
+    <title>Jadwal Piket + Absen Permanen</title>
     <style>
         body {font-family: Arial; background:#f2f2f2; text-align:center;}
         h1 {color:#2c3e50;}
@@ -9,6 +9,7 @@
         th, td {border:1px solid #333; padding:8px;}
         th {background:#27ae60; color:white;}
         button {padding:5px 10px; background:#3498db; color:white; border:none; cursor:pointer;}
+        #reset {background:red;}
     </style>
 </head>
 <body>
@@ -25,6 +26,7 @@
 
 <h2>📋 DATA ABSEN</h2>
 <ul id="dataAbsen"></ul>
+<button id="reset" onclick="resetAbsen()">Hapus Semua Absen</button>
 
 <script>
 let nama = ["Karim","Riky","Ibnu","Manik","Fariz"];
@@ -40,10 +42,29 @@ for(let i=1;i<=hari;i++){
 
 function absen(nama){
     let waktu = new Date().toLocaleString();
-    let data = document.createElement("li");
-    data.innerHTML = nama + " hadir jam " + waktu;
-    document.getElementById("dataAbsen").appendChild(data);
+    let list = JSON.parse(localStorage.getItem("absenData") || "[]");
+    list.push(nama + " hadir jam " + waktu);
+    localStorage.setItem("absenData", JSON.stringify(list));
+    tampilkan();
 }
+
+function tampilkan(){
+    let dataList = document.getElementById("dataAbsen");
+    dataList.innerHTML = "";
+    let list = JSON.parse(localStorage.getItem("absenData") || "[]");
+    list.forEach(item=>{
+        let li = document.createElement("li");
+        li.textContent = item;
+        dataList.appendChild(li);
+    });
+}
+
+function resetAbsen(){
+    localStorage.removeItem("absenData");
+    tampilkan();
+}
+
+tampilkan();
 </script>
 
 </body>
