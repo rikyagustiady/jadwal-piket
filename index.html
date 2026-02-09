@@ -13,6 +13,7 @@
         #rekap {margin-top:30px; font-size:18px;}
         .hapusBtn{background:red;margin-bottom:10px;}
         .editNama{background:#fff3cd; cursor:text;}
+        .editCatatan{background:#d1ecf1; cursor:text;}
     </style>
 </head>
 <body>
@@ -26,6 +27,7 @@
 <th>Keterangan</th>
 <th>Nama (bisa diedit)</th>
 <th>Absen</th>
+<th>Catatan</th>
 </tr>
 </table>
 
@@ -58,15 +60,16 @@ function acak(arr){
  return arr.sort(()=>Math.random()-0.5);
 }
 
-// Ambil data nama yang tersimpan di localStorage (jika ada)
+// Ambil data nama & catatan yang tersimpan di localStorage (jika ada)
 let savedNama = JSON.parse(localStorage.getItem("namaPiket")||"[]");
+let savedCatatan = JSON.parse(localStorage.getItem("catatanPiket")||"[]");
 let savedIndex = 0;
 
 // BULAN MARET
 let b = 2; // Maret
 let rb=tabel.insertRow();
 rb.className="bulan";
-rb.insertCell(0).colSpan=5;
+rb.insertCell(0).colSpan=6;
 rb.cells[0].innerHTML="BULAN MARET 2026";
 
 let urutanBulan = acak([...daftarNama]);
@@ -88,12 +91,14 @@ for(let d=1;d<=jumlahHari;d++){
    tr.insertCell(2).innerHTML=libur2026[tglStr];
    tr.insertCell(3).innerHTML="-";
    tr.insertCell(4).innerHTML="-";
+   tr.insertCell(5).innerHTML="-";
   }
   else if(hari==0 || hari==6){
    tr.className="libur";
    tr.insertCell(2).innerHTML="Libur Akhir Pekan";
    tr.insertCell(3).innerHTML="-";
    tr.insertCell(4).innerHTML="-";
+   tr.insertCell(5).innerHTML="-";
   }
   else{
    tr.insertCell(2).innerHTML="-";
@@ -106,15 +111,27 @@ for(let d=1;d<=jumlahHari;d++){
    } else {
        namaCell.innerText = orang;
    }
-   savedIndex++;
-
    namaCell.contentEditable=true;
    namaCell.className="editNama";
 
+   // Catatan
+   let catatanCell=tr.insertCell(5);
+   if(savedCatatan[savedIndex]){
+       catatanCell.innerText = savedCatatan[savedIndex];
+   } else {
+       catatanCell.innerText = "";
+   }
+   catatanCell.contentEditable=true;
+   catatanCell.className="editCatatan";
+
+   savedIndex++;
+
+   // Event listener input untuk update rekap & simpan otomatis
    namaCell.addEventListener("input", ()=>{
        hitungRekap();
-       simpanNama();
+       simpanData();
    });
+   catatanCell.addEventListener("input", simpanData);
 
    tr.insertCell(4).innerHTML="<button onclick='absen(this)'>Absen</button>";
   }
@@ -168,12 +185,13 @@ function hitungRekap(){
  }
 }
 
-function simpanNama(){
+function simpanData(){
  let namaData=[];
- document.querySelectorAll(".editNama").forEach(cell=>{
-   namaData.push(cell.innerText.trim());
- });
+ let catatanData=[];
+ document.querySelectorAll(".editNama").forEach(cell=> namaData.push(cell.innerText.trim()));
+ document.querySelectorAll(".editCatatan").forEach(cell=> catatanData.push(cell.innerText.trim()));
  localStorage.setItem("namaPiket", JSON.stringify(namaData));
+ localStorage.setItem("catatanPiket", JSON.stringify(catatanData));
 }
 
 tampilkan();
