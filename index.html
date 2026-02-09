@@ -13,7 +13,6 @@
         #rekap {margin-top:30px; font-size:18px;}
         .hapusBtn{background:red;margin-bottom:10px;}
         .editNama{background:#fff3cd; cursor:text;}
-        .editCatatan{background:#d1ecf1; cursor:text;}
     </style>
 </head>
 <body>
@@ -27,7 +26,6 @@
 <th>Keterangan</th>
 <th>Nama (bisa diedit)</th>
 <th>Absen</th>
-<th>Catatan</th>
 </tr>
 </table>
 
@@ -57,15 +55,14 @@ function format(t){
  return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,'0')+"-"+String(t.getDate()).padStart(2,'0');
 }
 
-// Ambil data nama & catatan yang tersimpan di localStorage
+// Ambil data nama yang tersimpan di localStorage
 let savedNama = JSON.parse(localStorage.getItem("namaPiket")||"[]");
-let savedCatatan = JSON.parse(localStorage.getItem("catatanPiket")||"[]");
 let savedIndex = 0;
 
 // BULAN MARET
 let rb = tabel.insertRow();
 rb.className = "bulan";
-rb.insertCell(0).colSpan = 6;
+rb.insertCell(0).colSpan = 5;
 rb.cells[0].innerHTML = "BULAN MARET 2026";
 
 // Jumlah hari di Maret
@@ -86,13 +83,11 @@ for(let d=1; d<=jumlahHari; d++){
         tr.insertCell(2).innerHTML = liburMaret[tglStr];
         tr.insertCell(3).innerHTML = "-";
         tr.insertCell(4).innerHTML = "-";
-        tr.insertCell(5).innerHTML = "-";
     } else if(hari==0 || hari==6){
         tr.className="libur";
         tr.insertCell(2).innerHTML = "Libur Akhir Pekan";
         tr.insertCell(3).innerHTML = "-";
         tr.insertCell(4).innerHTML = "-";
-        tr.insertCell(5).innerHTML = "-";
     } else {
         tr.insertCell(2).innerHTML = "-";
 
@@ -103,21 +98,13 @@ for(let d=1; d<=jumlahHari; d++){
         namaCell.innerText = savedNama[savedIndex] || orang;
         namaCell.contentEditable = true;
         namaCell.className = "editNama";
-
-        // Catatan
-        let catatanCell = tr.insertCell(5);
-        catatanCell.innerText = savedCatatan[savedIndex] || "";
-        catatanCell.contentEditable = true;
-        catatanCell.className = "editCatatan";
-
         savedIndex++;
 
         // Tombol absen
         tr.insertCell(4).innerHTML = "<button onclick='absen(this)'>Absen</button>";
 
-        // Event listener untuk simpan otomatis & rekap
-        namaCell.addEventListener("input", ()=>{ hitungRekap(); simpanData(); });
-        catatanCell.addEventListener("input", simpanData);
+        // Update rekap & simpan otomatis saat diubah
+        namaCell.addEventListener("input", ()=>{ hitungRekap(); simpanNama(); });
     }
 }
 
@@ -172,14 +159,11 @@ function hitungRekap(){
     }
 }
 
-// Simpan nama & catatan otomatis
-function simpanData(){
+// Simpan nama otomatis
+function simpanNama(){
     let namaData = [];
-    let catatanData = [];
     document.querySelectorAll(".editNama").forEach(cell=> namaData.push(cell.innerText.trim()));
-    document.querySelectorAll(".editCatatan").forEach(cell=> catatanData.push(cell.innerText.trim()));
     localStorage.setItem("namaPiket", JSON.stringify(namaData));
-    localStorage.setItem("catatanPiket", JSON.stringify(catatanData));
 }
 
 // Inisialisasi tampilan
