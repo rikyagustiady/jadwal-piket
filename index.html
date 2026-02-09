@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Jadwal Piket 2026 + Libur Nasional</title>
+    <title>Jadwal Piket 2026</title>
     <style>
         body {font-family: Arial; background:#f2f2f2; text-align:center;}
-        h1 {color:#2c3e50;}
         table {margin:auto; border-collapse: collapse; width:98%;}
         th, td {border:1px solid #333; padding:6px; font-size:14px;}
         th {background:#27ae60; color:white;}
-        .liburWarna {background:#ffb3b3;}
+        .libur {background:#ffb3b3;}
         .bulan {background:#34495e; color:white; font-weight:bold;}
-        button {padding:4px 8px; background:#3498db; color:white; border:none; cursor:pointer;}
+        button {padding:4px 8px; background:#3498db; color:white; border:none;}
     </style>
 </head>
 <body>
@@ -21,24 +20,26 @@
 <tr>
 <th>Tanggal</th>
 <th>Hari</th>
-<th>Libur / Keterangan</th>
-<th>Nama Piket</th>
+<th>Keterangan</th>
+<th>Nama</th>
 <th>Absen</th>
 </tr>
 </table>
 
-<h2>📋 DATA ABSEN</h2>
+<h2>DATA ABSEN</h2>
 <ul id="dataAbsen"></ul>
 
 <script>
-let nama = ["Karim","Riky","Ibnu","Manik","Fariz"];
+let nama=["Karim","Riky","Ibnu","Manik","Fariz"];
 
-let libur2026 = {
+let libur2026={
 "2026-03-18":"Cuti Bersama Nyepi",
 "2026-03-19":"Hari Suci Nyepi",
 "2026-03-20":"Cuti Bersama Idul Fitri",
 "2026-03-21":"Hari Raya Idul Fitri",
 "2026-03-22":"Cuti Bersama Idul Fitri",
+"2026-03-23":"Cuti Bersama Idul Fitri",
+"2026-03-24":"Cuti Bersama Idul Fitri",
 "2026-04-03":"Wafat Yesus Kristus",
 "2026-05-01":"Hari Buruh",
 "2026-05-14":"Kenaikan Yesus Kristus",
@@ -53,74 +54,77 @@ let libur2026 = {
 "2026-12-25":"Hari Raya Natal"
 };
 
-let tabel = document.getElementById("jadwal");
-let noNama = 0;
+let tabel=document.getElementById("jadwal");
+let noNama=0;
 
 function format(t){
-    let y = t.getFullYear();
-    let m = String(t.getMonth()+1).padStart(2,'0');
-    let d = String(t.getDate()).padStart(2,'0');
-    return y+"-"+m+"-"+d;
+ let y=t.getFullYear();
+ let m=String(t.getMonth()+1).padStart(2,'0');
+ let d=String(t.getDate()).padStart(2,'0');
+ return y+"-"+m+"-"+d;
 }
 
-let namaBulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+let bulanNama=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
-for(let b=2; b<=11; b++){
-    let rowBulan = tabel.insertRow();
-    rowBulan.className="bulan";
-    rowBulan.insertCell(0).colSpan=5;
-    rowBulan.cells[0].innerHTML="BULAN "+namaBulan[b].toUpperCase();
+for(let b=2;b<=11;b++){
+ let rb=tabel.insertRow();
+ rb.className="bulan";
+ rb.insertCell(0).colSpan=5;
+ rb.cells[0].innerHTML="BULAN "+bulanNama[b].toUpperCase();
 
-    let jumlahHari = new Date(2026, b+1, 0).getDate();
+ let jumlahHari=new Date(2026,b+1,0).getDate();
 
-    for(let d=1; d<=jumlahHari; d++){
-        let tanggal = new Date(2026, b, d);
-        let hariIndex = tanggal.getDay();
-        let strTgl = format(tanggal);
+ for(let d=1;d<=jumlahHari;d++){
+  let tgl=new Date(2026,b,d);
+  let hari=tgl.getDay();
+  let tglStr=format(tgl);
 
-        let tr = tabel.insertRow();
-        tr.insertCell(0).innerHTML = strTgl;
-        tr.insertCell(1).innerHTML = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"][hariIndex];
+  let tr=tabel.insertRow();
+  tr.insertCell(0).innerHTML=tglStr;
+  tr.insertCell(1).innerHTML=["Min","Sen","Sel","Rab","Kam","Jum","Sab"][hari];
 
-        if(hariIndex == 0 || hariIndex == 6){
-            tr.classList.add("liburWarna");
-            tr.insertCell(2).innerHTML = "Libur Akhir Pekan";
-            tr.insertCell(3).innerHTML = "-";
-            tr.insertCell(4).innerHTML = "-";
-        }
-        else if(libur2026[strTgl]){
-            tr.classList.add("liburWarna");
-            tr.insertCell(2).innerHTML = libur2026[strTgl];
-            tr.insertCell(3).innerHTML = "-";
-            tr.insertCell(4).innerHTML = "-";
-        }
-        else {
-            tr.insertCell(2).innerHTML = "-";
-            let person = nama[noNama % nama.length];
-            noNama++;
-            tr.insertCell(3).innerHTML = person;
-            tr.insertCell(4).innerHTML = "<button onclick='absen(\""+person+"\")'>Hadir</button>";
-        }
-    }
+  // PRIORITAS 1: CUTI / LIBUR NASIONAL
+  if(libur2026[tglStr]){
+   tr.className="libur";
+   tr.insertCell(2).innerHTML=libur2026[tglStr];
+   tr.insertCell(3).innerHTML="-";
+   tr.insertCell(4).innerHTML="-";
+  }
+  // PRIORITAS 2: AKHIR PEKAN
+  else if(hari==0 || hari==6){
+   tr.className="libur";
+   tr.insertCell(2).innerHTML="Libur Akhir Pekan";
+   tr.insertCell(3).innerHTML="-";
+   tr.insertCell(4).innerHTML="-";
+  }
+  // HARI KERJA
+  else{
+   tr.insertCell(2).innerHTML="-";
+   let orang=nama[noNama%nama.length];
+   noNama++;
+   tr.insertCell(3).innerHTML=orang;
+   tr.insertCell(4).innerHTML="<button onclick='absen(\""+orang+"\")'>Hadir</button>";
+  }
+ }
 }
 
 function absen(n){
-    let now = new Date().toLocaleString();
-    let list = JSON.parse(localStorage.getItem("absenData") || "[]");
-    list.push(n + " hadir " + now);
-    localStorage.setItem("absenData", JSON.stringify(list));
-    tampilkan();
+ let w=new Date().toLocaleString();
+ let list=JSON.parse(localStorage.getItem("absenData")||"[]");
+ list.push(n+" hadir "+w);
+ localStorage.setItem("absenData",JSON.stringify(list));
+ tampilkan();
 }
 
 function tampilkan(){
-    let d = document.getElementById("dataAbsen");
-    d.innerHTML="";
-    let list = JSON.parse(localStorage.getItem("absenData") || "[]");
-    list.forEach(x=>{
-        let li = document.createElement("li");
-        li.textContent = x;
-        d.appendChild(li);
-    });
+ let d=document.getElementById("dataAbsen");
+ d.innerHTML="";
+ let list=JSON.parse(localStorage.getItem("absenData")||"[]");
+ list.forEach(x=>{
+  let li=document.createElement("li");
+  li.textContent=x;
+  d.appendChild(li);
+ });
 }
 tampilkan();
 </script>
