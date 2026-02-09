@@ -30,10 +30,8 @@
 <ul id="dataAbsen"></ul>
 
 <script>
-// ================= MULTI USER NAMA =================
 let daftarNama=["Koptu Karim","Serka Riky","Serma Totok","Serka Ibnu","Sertu Manik","Sertu Fariz"];
 
-// ================= LIBUR =================
 let libur2026={
 "2026-03-18":"Cuti Bersama Nyepi",
 "2026-03-19":"Hari Suci Nyepi",
@@ -57,22 +55,28 @@ let libur2026={
 };
 
 let tabel=document.getElementById("jadwal");
-let noNama=0;
 
 function format(t){
- let y=t.getFullYear();
- let m=String(t.getMonth()+1).padStart(2,'0');
- let d=String(t.getDate()).padStart(2,'0');
- return y+"-"+m+"-"+d;
+ return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,'0')+"-"+String(t.getDate()).padStart(2,'0');
+}
+
+// 🔀 Fungsi acak array
+function acak(arr){
+ return arr.sort(()=>Math.random()-0.5);
 }
 
 let bulanNama=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
 for(let b=2;b<=11;b++){
+
  let rb=tabel.insertRow();
  rb.className="bulan";
  rb.insertCell(0).colSpan=5;
  rb.cells[0].innerHTML="BULAN "+bulanNama[b].toUpperCase();
+
+ // 🔥 ACak ulang tiap bulan
+ let urutanBulan = acak([...daftarNama]);
+ let noNama=0;
 
  let jumlahHari=new Date(2026,b+1,0).getDate();
 
@@ -99,7 +103,7 @@ for(let b=2;b<=11;b++){
   }
   else{
    tr.insertCell(2).innerHTML="-";
-   let orang=daftarNama[noNama%daftarNama.length];
+   let orang=urutanBulan[noNama%urutanBulan.length];
    noNama++;
    tr.insertCell(3).innerHTML=orang;
    tr.insertCell(4).innerHTML="<button onclick='absen(\""+orang+"\")'>Absen</button>";
@@ -107,7 +111,6 @@ for(let b=2;b<=11;b++){
  }
 }
 
-// ================= ABSEN MULTI USER =================
 function absen(nama){
  let konfirmasi=confirm("Absen atas nama "+nama+"?");
  if(konfirmasi){
