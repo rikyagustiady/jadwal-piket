@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Jadwal Piket 2026 Lengkap</title>
+    <title>Jadwal Piket 2026 + Libur Nasional</title>
     <style>
         body {font-family: Arial; background:#f2f2f2; text-align:center;}
         h1 {color:#2c3e50;}
         table {margin:auto; border-collapse: collapse; width:98%;}
         th, td {border:1px solid #333; padding:6px; font-size:14px;}
         th {background:#27ae60; color:white;}
+        .liburWarna {background:#ffb3b3;}
         .bulan {background:#34495e; color:white; font-weight:bold;}
-        .libur {background:#ffb3b3;}
-        button {padding:3px 6px; background:#3498db; color:white; border:none;}
+        button {padding:4px 8px; background:#3498db; color:white; border:none; cursor:pointer;}
     </style>
 </head>
 <body>
@@ -21,8 +21,8 @@
 <tr>
 <th>Tanggal</th>
 <th>Hari</th>
-<th>Keterangan</th>
-<th>Nama</th>
+<th>Libur / Keterangan</th>
+<th>Nama Piket</th>
 <th>Absen</th>
 </tr>
 </table>
@@ -31,84 +31,110 @@
 <ul id="dataAbsen"></ul>
 
 <script>
+// Nama petugas piket berulang
 let nama = ["Karim","Riky","Ibnu","Manik","Fariz"];
-let bulanNama = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
-let libur = {
-"2026-03-22":"Hari Raya",
-"2026-04-03":"Wafat Isa Almasih",
-"2026-05-01":"Hari Buruh",
-"2026-05-14":"Kenaikan Isa Almasih",
-"2026-05-26":"Waisak",
+// Daftar libur nasional + cuti bersama 2026
+let libur2026 = {
+"2026-01-01":"Tahun Baru 2026 Masehi",
+"2026-01-16":"Isra’ Mi’raj Nabi Muhammad SAW",
+"2026-02-17":"Tahun Baru Imlek 2577 Kongzili",
+"2026-03-18":"Cuti Bersama Hari Suci Nyepi",
+"2026-03-19":"Hari Suci Nyepi",
+"2026-03-20":"Cuti Bersama Idul Fitri",
+"2026-03-21":"Hari Raya Idul Fitri 1447 H",
+"2026-03-22":"Cuti Bersama Idul Fitri",
+"2026-04-03":"Wafat Yesus Kristus",
+"2026-04-05":"Hari Kebangkitan Yesus Kristus (Paskah)",
+"2026-05-01":"Hari Buruh Internasional",
+"2026-05-14":"Kenaikan Yesus Kristus",
+"2026-05-15":"Cuti Bersama Kenaikan Yesus Kristus",
+"2026-05-27":"Hari Raya Idul Adha 1447 H",
+"2026-05-28":"Cuti Bersama Hari Raya Idul Adha",
+"2026-05-31":"Hari Raya Waisak 2570 BE",
 "2026-06-01":"Hari Lahir Pancasila",
-"2026-07-17":"Tahun Baru Islam",
-"2026-08-17":"Hari Kemerdekaan",
-"2026-12-25":"Natal"
+"2026-06-16":"1 Muharram Tahun Baru Islam 1448 H",
+"2026-08-17":"Hari Kemerdekaan Republik Indonesia",
+"2026-12-24":"Cuti Bersama Natal",
+"2026-12-25":"Hari Raya Natal"
 };
 
 let tabel = document.getElementById("jadwal");
-let noNama=0;
+let noNama = 0;
 
+// Bantu format tanggal jadi YYYY-MM-DD
 function format(t){return t.toISOString().split("T")[0];}
 
-for(let bulan=2; bulan<=11; bulan++){
-    let trBulan = tabel.insertRow();
-    trBulan.className="bulan";
-    trBulan.insertCell(0).colSpan=5;
-    trBulan.cells[0].innerHTML="BULAN " + bulanNama[bulan].toUpperCase();
+// Nama bulan
+let namaBulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
-    let hariDalamBulan = new Date(2026, bulan+1, 0).getDate();
+// Loop dari Maret (2) sampai Desember (11)
+for(let b=2; b<=11; b++){
+    // Tampilkan nama bulan di tabel
+    let rowBulan = tabel.insertRow();
+    rowBulan.className="bulan";
+    rowBulan.insertCell(0).colSpan=5;
+    rowBulan.cells[0].innerHTML="BULAN "+namaBulan[b].toUpperCase();
 
-    for(let t=1; t<=hariDalamBulan; t++){
-        let tanggal = new Date(2026, bulan, t);
-        let hari = tanggal.getDay();
+    // Berapa hari di bulan ini
+    let jumlahHari = new Date(2026, b+1, 0).getDate();
+
+    for(let d=1; d<=jumlahHari; d++){
+        let tanggal = new Date(2026, b, d);
+        let hariIndex = tanggal.getDay();
+        let strTgl = format(tanggal);
+
         let tr = tabel.insertRow();
-        let tglStr=format(tanggal);
+        tr.insertCell(0).innerHTML = strTgl;
+        tr.insertCell(1).innerHTML = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"][hariIndex];
 
-        tr.insertCell(0).innerHTML=tglStr;
-        tr.insertCell(1).innerHTML=["Min","Sen","Sel","Rab","Kam","Jum","Sab"][hari];
-
-        if(hari==0 || hari==6){
-            tr.classList.add("libur");
-            tr.insertCell(2).innerHTML="Libur Akhir Pekan";
-            tr.insertCell(3).innerHTML="-";
-            tr.insertCell(4).innerHTML="-";
+        // Jika Sabtu (6) atau Minggu (0)
+        if(hariIndex == 0 || hariIndex == 6){
+            tr.classList.add("liburWarna");
+            tr.insertCell(2).innerHTML = "Libur Akhir Pekan";
+            tr.insertCell(3).innerHTML = "-";
+            tr.insertCell(4).innerHTML = "-";
         }
-        else if(libur[tglStr]){
-            tr.classList.add("libur");
-            tr.insertCell(2).innerHTML=libur[tglStr];
-            tr.insertCell(3).innerHTML="-";
-            tr.insertCell(4).innerHTML="-";
+        // Jika tanggal masuk daftar libur nasional/cuti bersama
+        else if(libur2026[strTgl]){
+            tr.classList.add("liburWarna");
+            tr.insertCell(2).innerHTML = libur2026[strTgl];
+            tr.insertCell(3).innerHTML = "-";
+            tr.insertCell(4).innerHTML = "-";
         }
-        else{
-            let orang=nama[noNama%nama.length];
+        // Hari kerja biasa → isi nama piket
+        else {
+            tr.insertCell(2).innerHTML = "-";
+            let person = nama[noNama % nama.length];
             noNama++;
-            tr.insertCell(2).innerHTML="-";
-            tr.insertCell(3).innerHTML=orang;
-            tr.insertCell(4).innerHTML="<button onclick='absen(\""+orang+"\")'>Hadir</button>";
+            tr.insertCell(3).innerHTML = person;
+            tr.insertCell(4).innerHTML = "<button onclick='absen(\""+person+"\")'>Hadir</button>";
         }
     }
 }
 
+// Simpan absen pakai localStorage
 function absen(n){
-    let w=new Date().toLocaleString();
-    let list=JSON.parse(localStorage.getItem("absenData")||"[]");
-    list.push(n+" hadir "+w);
-    localStorage.setItem("absenData",JSON.stringify(list));
+    let now = new Date().toLocaleString();
+    let list = JSON.parse(localStorage.getItem("absenData") || "[]");
+    list.push(n + " hadir " + now);
+    localStorage.setItem("absenData", JSON.stringify(list));
     tampilkan();
 }
 
 function tampilkan(){
-    let d=document.getElementById("dataAbsen");
+    let d = document.getElementById("dataAbsen");
     d.innerHTML="";
-    let list=JSON.parse(localStorage.getItem("absenData")||"[]");
+    let list = JSON.parse(localStorage.getItem("absenData") || "[]");
     list.forEach(x=>{
-        let li=document.createElement("li");
-        li.textContent=x;
+        let li = document.createElement("li");
+        li.textContent = x;
         d.appendChild(li);
     });
 }
+
 tampilkan();
+
 </script>
 
 </body>
