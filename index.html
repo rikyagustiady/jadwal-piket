@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Jadwal Piket Otomatis 2026</title>
+    <title>Jadwal Piket 2026 Lengkap</title>
     <style>
         body {font-family: Arial; background:#f2f2f2; text-align:center;}
         h1 {color:#2c3e50;}
         table {margin:auto; border-collapse: collapse; width:98%;}
         th, td {border:1px solid #333; padding:6px; font-size:14px;}
         th {background:#27ae60; color:white;}
+        .bulan {background:#34495e; color:white; font-weight:bold;}
         .libur {background:#ffb3b3;}
         button {padding:3px 6px; background:#3498db; color:white; border:none;}
     </style>
 </head>
 <body>
 
-<h1>JADWAL PIKET MARET–DESEMBER 2026</h1>
+<h1>JADWAL PIKET MARET – DESEMBER 2026</h1>
 
 <table id="jadwal">
 <tr>
 <th>Tanggal</th>
 <th>Hari</th>
+<th>Keterangan</th>
 <th>Nama</th>
 <th>Absen</th>
 </tr>
@@ -30,56 +32,76 @@
 
 <script>
 let nama = ["Karim","Riky","Ibnu","Manik","Fariz"];
-let liburNasional = [
-"2026-03-22","2026-04-03","2026-05-01","2026-05-14",
-"2026-05-26","2026-06-01","2026-07-17","2026-08-17",
-"2026-12-25"
-]; // bisa ditambah
+let bulanNama = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
+let libur = {
+"2026-03-22":"Hari Raya",
+"2026-04-03":"Wafat Isa Almasih",
+"2026-05-01":"Hari Buruh",
+"2026-05-14":"Kenaikan Isa Almasih",
+"2026-05-26":"Waisak",
+"2026-06-01":"Hari Lahir Pancasila",
+"2026-07-17":"Tahun Baru Islam",
+"2026-08-17":"Hari Kemerdekaan",
+"2026-12-25":"Natal"
+};
 
 let tabel = document.getElementById("jadwal");
-let noNama = 0;
+let noNama=0;
 
-function format(t){
-    return t.toISOString().split("T")[0];
-}
+function format(t){return t.toISOString().split("T")[0];}
 
-for(let bulan=2; bulan<=11; bulan++){ // Maret(2) s/d Des(11)
+for(let bulan=2; bulan<=11; bulan++){
+    let trBulan = tabel.insertRow();
+    trBulan.className="bulan";
+    trBulan.insertCell(0).colSpan=5;
+    trBulan.cells[0].innerHTML="BULAN " + bulanNama[bulan].toUpperCase();
+
     let hariDalamBulan = new Date(2026, bulan+1, 0).getDate();
 
     for(let t=1; t<=hariDalamBulan; t++){
         let tanggal = new Date(2026, bulan, t);
         let hari = tanggal.getDay();
         let tr = tabel.insertRow();
+        let tglStr=format(tanggal);
 
-        let tglStr = format(tanggal);
-        tr.insertCell(0).innerHTML = tglStr;
-        tr.insertCell(1).innerHTML = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"][hari];
+        tr.insertCell(0).innerHTML=tglStr;
+        tr.insertCell(1).innerHTML=["Min","Sen","Sel","Rab","Kam","Jum","Sab"][hari];
 
-        if(hari==0 || hari==6 || liburNasional.includes(tglStr)){
+        if(hari==0 || hari==6){
             tr.classList.add("libur");
-            tr.insertCell(2).innerHTML = "LIBUR";
-            tr.insertCell(3).innerHTML = "-";
-        }else{
-            let orang = nama[noNama % nama.length];
+            tr.insertCell(2).innerHTML="Libur Akhir Pekan";
+            tr.insertCell(3).innerHTML="-";
+            tr.insertCell(4).innerHTML="-";
+        }
+        else if(libur[tglStr]){
+            tr.classList.add("libur");
+            tr.insertCell(2).innerHTML=libur[tglStr];
+            tr.insertCell(3).innerHTML="-";
+            tr.insertCell(4).innerHTML="-";
+        }
+        else{
+            let orang=nama[noNama%nama.length];
             noNama++;
-            tr.insertCell(2).innerHTML = orang;
-            tr.insertCell(3).innerHTML = "<button onclick='absen(\""+orang+"\")'>Hadir</button>";
+            tr.insertCell(2).innerHTML="-";
+            tr.insertCell(3).innerHTML=orang;
+            tr.insertCell(4).innerHTML="<button onclick='absen(\""+orang+"\")'>Hadir</button>";
         }
     }
 }
 
 function absen(n){
-    let w = new Date().toLocaleString();
-    let list = JSON.parse(localStorage.getItem("absenData") || "[]");
+    let w=new Date().toLocaleString();
+    let list=JSON.parse(localStorage.getItem("absenData")||"[]");
     list.push(n+" hadir "+w);
-    localStorage.setItem("absenData", JSON.stringify(list));
+    localStorage.setItem("absenData",JSON.stringify(list));
     tampilkan();
 }
 
 function tampilkan(){
-    let d = document.getElementById("dataAbsen");
+    let d=document.getElementById("dataAbsen");
     d.innerHTML="";
-    let list = JSON.parse(localStorage.getItem("absenData") || "[]");
+    let list=JSON.parse(localStorage.getItem("absenData")||"[]");
     list.forEach(x=>{
         let li=document.createElement("li");
         li.textContent=x;
